@@ -14,23 +14,27 @@ from sklearn.cross_validation import train_test_split
 
 from sklearn.cross_validation import *
 from sklearn.grid_search import GridSearchCV
+
 if __name__=='__main__':
     train = pd.read_csv("input/train.csv")
     test = pd.read_csv("input/test.csv")
 
-
+    # drop the meaningless item
     train = train.drop('QuoteNumber', axis=1)
     test = test.drop('QuoteNumber', axis=1)
 
-    # Lets play with some dates
+    # change to dates type
     train['Date'] = pd.to_datetime(pd.Series(train['Original_Quote_Date']))
     train = train.drop('Original_Quote_Date', axis=1)
 
     test['Date'] = pd.to_datetime(pd.Series(test['Original_Quote_Date']))
     test = test.drop('Original_Quote_Date', axis=1)
 
+    # split dates into the year/month/day
     train['Year'] = train['Date'].apply(lambda x: int(str(x)[:4]))
+    #train['Year'] = train['Date'].apply(lambda x: x.year)
     train['Month'] = train['Date'].apply(lambda x: int(str(x)[5:7]))
+    #train['Month'] = train['Date'].apply(lambda x: x.month))
     train['weekday'] = train['Date'].dt.dayofweek
 
     test['Year'] = test['Date'].apply(lambda x: int(str(x)[:4]))
@@ -44,10 +48,10 @@ if __name__=='__main__':
     train = train.fillna(-999)
     test = test.fillna(-999)
 
-    features = list(train.columns[1:])  #la colonne 0 est le quote_conversionflag
+    features = list(train.columns[1:])  #column 0 is quote_conversionflag
     print(features)
 
-
+    #LabelEncode the object(not data)
     for f in train.columns:
         if train[f].dtype=='object':
             print(f)
